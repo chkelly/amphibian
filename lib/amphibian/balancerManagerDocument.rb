@@ -20,7 +20,7 @@ module Amphibian
 
     # Returns an array of strings indicated the balancer members parsed out of the BalancerManager page.
     def hosts
-      @hosts ||= (get_doc/'a').select{|a_tag| a_tag.inner_text =~ /^http:/}.map{|a_tag| a_tag.inner_text}
+      @hosts ||= (get_doc/'a').select{|a_tag| a_tag.inner_text =~ /^http[s]?:/}.map{|a_tag| a_tag.inner_text}
     end
 
     # Get an array of hosts that are in 'Ok' state
