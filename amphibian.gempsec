@@ -1,0 +1,14 @@
+require 'rake'
+Gem::Specification.new do |s|
+  s.name        = 'amphibian'
+  s.version     = '0.0.2'
+  s.date        = '2009-06-28'
+  s.summary     = "Gem for managing apache mox_proxy_balancer"
+  s.description = "Amphibian is a ruby library for accessing and interacting with an Apache mod_proxy_balancer via the web GUI created by the balancer_manager directive."
+  s.authors     = ["Nick Stielau"]
+  s.email       = 'nick.stielau@gmail.com'
+  s.files       = FileList['lib/**/*.rb', 'bin/*', '[A-Z]*', 'test/**/*'].to_a
+  s.homepage    =
+    'http://amphibian.rubyforge.org/'
+  s.license       = 'MIT'
+end

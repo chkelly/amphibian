@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'amphibian'
+
+options = {:dry_run => false, :test_page => '/', :test_regex => nil}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: #{File.basename($0)}"
+
+  opts.on("-h", "--help", "Displays this help info") do
+    puts opts
+    exit 0
+  end
+  
+  opts.on("-d", "--dry-run", "Prints and logs, but does not change balancer manager.") do |d|
+    options[:dry_run] = d
+  end
+  
+  opts.on("-b", "--balancer-manager URL", "The URL of the balancer-manager to use.") do |b|
+    options[:balancer_manager_url] = b
+  end
+  
+  opts.on("-p", "--test-page PAGE", "The page to test with the heartbeat, i.e. '/pages/heartbeat'.") do |p|
+    options[:test_page] = p
+  end
+  
+  opts.on("-r", "--test-regex REGEX", "The regex to run against the test page that verify's the page is loading correctly.") do |r|
+    options[:test_regex] = r
+  end
+
+  # TODO: Version
+  # opts.on_tail("--version", "Show version") do
+  #   puts Amphibian::Version.join('.')
+  #   exit
+  # end
+
+  begin
+    opts.parse!(ARGV)
+  rescue OptionParser::ParseError => e
+    warn e.message
+    puts opts
+    exit 1
+  end
+end
+
+# Arg checking...
+abort "You must specify the URL of the balancer-manager to use." if options[:balancer_manager_url].nil?
+
+# Instanciate and check!
+amp = Amphibian::Runner.new(options[:balancer_manager_url], options[:test_page], options[:test_regex], options[:dry_run])
+amp.do_check
+
+
