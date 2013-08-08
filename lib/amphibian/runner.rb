@@ -4,30 +4,30 @@ module Amphibian
   class Runner
     # TODO: log everything, and set log level, so we don't have to print anything
     # TODO: Email at the end
-    
+
     def initialize(balancer_manager_url, test_page='/', test_regex=nil, dry_run=false)
       @balancer_manager_url = balancer_manager_url
       @test_page = test_page
       @test_regex = test_regex
       @dry_run = dry_run
       @errors = []
-      
+
       if !balancer_manager_url.match("127.0.0.1") && !dry_run
         @dry_run = true
         log_error "Not running on localhost: Performing dry-run"
       end
-      
+
       @balancer_manager = BalancerManager.new(@balancer_manager_url, @dry_run)
 
       @min_hosts = -1
     end
-    
+
     def do_check
       check
     end
 
 private
-    
+
     # Checks the balancer members, enabling/disabling each depending on the status.
     def check
       puts
@@ -45,7 +45,7 @@ private
       puts
 
       @live_hosts.each do |host, state|
-        status = check_host(host, @test_page) 
+        status = check_host(host, @test_page)
         puts "  #{host} is #{status ? 'OK' : 'not responsive. Disabling via BalancerManager.'}"
         disable_host(host) if !status
       end
@@ -58,7 +58,7 @@ private
       @errors << error
       puts "ERROR: #{error}"
     end
-    
+
     # Returns the BalancerManager object.
     def get_balancer_manager
       @balancer_manager
@@ -71,12 +71,12 @@ private
         status = Timeout::timeout(timeout) do
           Net::HTTP.start(URI.parse(host).host) do |http|
             response = http.get(path)
-          
+
             if not response.code.match(/200/)
               log_error("Web Server down or not responding: #{response.code} #{response.message}")
               return false;
             end
-          
+
             if @test_regex && ! response.body.match(@test_regex)
               log_error("The response did not contain the regex '#{@test_regex}'")
               return false
@@ -93,17 +93,17 @@ private
         log_error("An unknown error occured checking #{host}#{path}: #{e}")
         return false;
       end
-      
+
       return true
     end
-    
+
     # Disables a host from the balancer.
     def disable_host(host)
       if @live_hosts.size <= @min_hosts
         puts "Will not take #{host} down, alreay at lower limit #{@min_hosts}"
         return
       end
-      
+
       #puts "Disabling host '#{host}'"
       get_balancer_manager.disable_host(host)
       send_email("Disabled #{host} from the balancer #{get_balancer_manager.balancer_name} at #{get_balancer_manager.balancer_manager_url}")

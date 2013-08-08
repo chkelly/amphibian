@@ -1,35 +1,35 @@
 module Amphibian
   class BalancerManager
-    
+
     def initialize(balancer_manager_url, dry_run = false)
       @balancer_manager_url = balancer_manager_url
       @dry_run = dry_run
-      
+
       if !balancer_manager_url.match("127.0.0.1") && !dry_run
         @dry_run = true
         log_error
         log_error "Not running on localhost: Performing dry-run"
         log_error
       end
-    end    
-    
+    end
+
     # Disables a host from the balancer.
     def disable_host(host)
       # TODO: Check Status
       toggle_host(host, 'Disable')
     end
-    
+
     # Enables a host in the balancer
     def enable_host(host)
       # TODO: Check Status
       toggle_host(host, 'Enable')
     end
-    
+
     # Returns an array of strings indicated the balancer members parsed out of the BalancerManager page.
     def hosts
       @hosts ||= (get_doc/'a').select{|a_tag| a_tag.inner_text =~ /^http:/}.map{|a_tag| a_tag.inner_text}
     end
-    
+
     # Get an array of hosts that are in 'Ok' state
     #---
     # TODO: Optionally force refresh
@@ -39,7 +39,7 @@ module Amphibian
       hosts_with_status.select{|host,state| state == 'Ok'}.each{|host, state| hosts_array << host}
       hosts_array
     end
-    
+
     # Get an array of hosts that are not in 'Ok' state
     #---
     # TODO: Optionally force refresh
@@ -49,27 +49,27 @@ module Amphibian
       hosts_with_status.select{|host,state| state != 'Ok'}.each{|host, state| hosts_array << host}
       hosts_array
     end
-    
+
     # Returns the name of the balancer on the BalancerManager page.
     def balancer_name
       @balancer_name ||= (get_doc/'a').select{|a_tag| a_tag.inner_text =~ /^balancer:/}.map{|a_tag| a_tag.inner_text}[0].sub('balancer://', '')
     end
-    
+
     # Returns the url of the BalancerManager page.
     def balancer_manager_url
       @balancer_manager_url
     end
-    
+
     # TODO: Optionally force refresh
     def host_enabled?(host)
       enabled_hosts.include?(host)
     end
 
-    # TODO: Optionally force refresh    
+    # TODO: Optionally force refresh
     def host_disabled?(host)
       !enabled_hosts.include?(host)
     end
-    
+
     def dry_run?
       @dry_run
     end
@@ -81,7 +81,7 @@ module Amphibian
       end
       host_to_status
     end
-        
+
 private
 
     # Sets the state of the host to the specified state
