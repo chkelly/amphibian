@@ -106,26 +106,6 @@ private
 
       #puts "Disabling host '#{host}'"
       get_balancer_manager.disable_host(host)
-      send_email("Disabled #{host} from the balancer #{get_balancer_manager.balancer_name} at #{get_balancer_manager.balancer_manager_url}")
-    end
-
-    def send_email(message)
-      begin
-        Net::SMTP.start('127.0.0.1', 25) do |smtp|
-          smtp.open_message_stream('foo@bar.com', ['foo@bar.com']) do |f|
-            f.puts 'From: foo@bar.com'
-            f.puts 'To: foo@bar.com'
-            f.puts 'Subject: Apache mod_balancer host disabled'
-            f.puts
-            f.puts message
-            f.puts
-            f.puts "Errors:"
-            f.puts @errors.join(",")
-          end
-        end
-      rescue Exception => e
-        log_error("Error sending email: #{e}")
-      end
     end
   end
 end
