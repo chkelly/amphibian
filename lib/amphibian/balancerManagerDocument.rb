@@ -4,13 +4,6 @@ module Amphibian
     def initialize(balancer_manager_url, dry_run = false)
       @balancer_manager_url = balancer_manager_url
       @dry_run = dry_run
-
-      if !balancer_manager_url.match("127.0.0.1") && !dry_run
-        @dry_run = true
-        log_error
-        log_error "Not running on localhost: Performing dry-run"
-        log_error
-      end
     end
 
     # Disables a host from the balancer.
