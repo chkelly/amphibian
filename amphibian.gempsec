@@ -1,7 +1,7 @@
 require 'rake'
 Gem::Specification.new do |s|
   s.name        = 'amphibian'
-  s.version     = '0.0.3'
+  s.version     = '0.0.4'
   s.date        = Time.now
   s.summary     = "Gem for managing apache mox_proxy_balancer"
   s.description = "Amphibian is a ruby library for accessing and interacting with an Apache mod_proxy_balancer via the web GUI created by the balancer_manager directive."

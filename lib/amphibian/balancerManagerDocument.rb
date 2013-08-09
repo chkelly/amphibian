@@ -48,6 +48,7 @@ module Amphibian
       @balancer_name ||= get_doc2().css('h3').to_s.scan(/\/\/([^"]*)</)[0][0]
     end
 
+    # Returns our session token which we need to pass back in our requests
     def nonce
       @nonce ||= get_doc2().css('a').first.to_s.scan(/nonce=([^"]*)">/)[0][0]
     end
