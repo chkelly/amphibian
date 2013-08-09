@@ -1,5 +1,3 @@
-require 'net/smtp'
-
 module Amphibian
   class Runner
     # TODO: log everything, and set log level, so we don't have to print anything

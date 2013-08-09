@@ -15,8 +15,3 @@ require 'nokogiri'
 # Files
 require 'amphibian/runner'
 require 'amphibian/balancerManagerDocument'
-
-
-module Amphibian
-  VERSION = '0.0.2'
-end
