@@ -5,10 +5,12 @@ Gem::Specification.new do |s|
   s.date        = Time.now
   s.summary     = "Gem for managing apache mox_proxy_balancer"
   s.description = "Amphibian is a ruby library for accessing and interacting with an Apache mod_proxy_balancer via the web GUI created by the balancer_manager directive."
-  s.authors     = ["Nick Stielau"]
-  s.email       = 'nick.stielau@gmail.com'
+  s.authors     = ["Chris Kelly","Nick Stielau"]
+  s.email       = 'chris@chris-kelly.net'
   s.files       = FileList['lib/**/*.rb', 'bin/*', '[A-Z]*', 'test/**/*'].to_a
   s.homepage    =
     'http://amphibian.rubyforge.org/'
   s.license       = 'MIT'
+  s.add_dependency('curb')
+  s.add_dependency('nokogiri')
 end
