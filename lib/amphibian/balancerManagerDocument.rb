@@ -83,7 +83,6 @@ private
     # Sets the state of the host to the specified state
     def toggle_host(host, state)
       log_error("#{state} is an invalid state") if state != "Enable" && state != "Disable"
-      puts state
       Curl.get("#{@balancer_manager_url}\?b=#{balancer_name}&w=#{host}&dw=#{state}&nonce=#{nonce}")
       # TODO: Check status
     end
