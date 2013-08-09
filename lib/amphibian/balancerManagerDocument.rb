@@ -45,9 +45,12 @@ module Amphibian
 
     # Returns the name of the balancer on the BalancerManager page.
     def balancer_name
-      @balancer_name ||= (get_doc/'a').select{|a_tag| a_tag.inner_text =~ /^balancer:/}.map{|a_tag| a_tag.inner_text}[0].sub('balancer://', '')
+      @balancer_name ||= get_doc2().css('h3').to_s.scan(/\/\/([^"]*)</)[0][0]
     end
 
+    def nonce
+      @nonce ||= get_doc2().css('a').first.to_s.scan(/nonce=([^"]*)">/)[0][0]
+    end
     # Returns the url of the BalancerManager page.
     def balancer_manager_url
       @balancer_manager_url
@@ -69,7 +72,7 @@ module Amphibian
 
     def hosts_with_status
       host_to_status = {}
-      (get_doc/'a').select{|a_tag| a_tag.inner_text =~ /^http:/}.each do |a_tag|
+      (get_doc/'a').select{|a_tag| a_tag.inner_text =~ /^http[s]?:/}.each do |a_tag|
         host_to_status[a_tag.inner_text] = (a_tag.parent.parent.children[6].inner_text.strip)
       end
       host_to_status
@@ -80,7 +83,8 @@ private
     # Sets the state of the host to the specified state
     def toggle_host(host, state)
       log_error("#{state} is an invalid state") if state != "Enable" && state != "Disable"
-      run "curl -s -o /dev/null #{@balancer_manager_url}\?b=#{balancer_name}\\&w=#{host}\\&dw=#{state}"
+      puts state
+      Curl.get("#{@balancer_manager_url}\?b=#{balancer_name}&w=#{host}&dw=#{state}&nonce=#{nonce}")
       # TODO: Check status
     end
 
@@ -100,6 +104,18 @@ private
     def get_doc
       @doc ||= begin
         Hpricot(open(@balancer_manager_url))
+      rescue Exception => e
+        if e =~ /403/
+          log_error "Balancer Manager is getting a 403: Forbidden response.  Make sure it is accessable from this location."
+        else
+          log_error "Error opening the balancer manager: #{e}"
+        end
+        nil
+      end
+    end
+    def get_doc2
+      @doc ||= begin
+        Nokogiri::HTML(open(@balancer_manager_url))
       rescue Exception => e
         if e =~ /403/
           log_error "Balancer Manager is getting a 403: Forbidden response.  Make sure it is accessable from this location."

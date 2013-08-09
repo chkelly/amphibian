@@ -9,6 +9,8 @@ require 'open-uri'
 # Gems
 require 'rubygems'
 require 'hpricot'
+require 'curb'
+require 'nokogiri'
 
 # Files
 require 'amphibian/runner'
